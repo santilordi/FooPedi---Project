@@ -4,7 +4,7 @@ import com.FooPedi.Proyecto.model.Client;
 import com.FooPedi.Proyecto.model.Order;
 import com.FooPedi.Proyecto.model.OrderItem;
 import com.FooPedi.Proyecto.util.EmptyOrderException;
-
+import com.FooPedi.Proyecto.util.OrderException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,12 +40,37 @@ public class OrderManager {
     }
 
     public List<Order> listClientOrders(Client client){
-        List<Client> listClientsReturn = new ArrayList<>;
+        List<Order> listClientsReturn = new ArrayList<>(); //lista de return
         
+        for (Order order : client.getOrdersClient()){
+            listClientsReturn.add(order);
+        }
+        
+        return listClientsReturn;
     }
 
-    public double calcTotalOrderCost(){
+    public double calcTotalOrderCost(int id) throws OrderException{
+        
+        //Busco la orden por id
+        Order orderAux = null;
+        for (Order order : orders){
+            if (order.getId() == id){
+                orderAux = order;
+                break;
+            }
+        }
 
+        if (orderAux == null) {
+            throw new OrderException("No se encontro una orden con el id: " + id);
+        }
+
+        //Calculo el costo de la orden
+        double total = 0;
+        for (OrderItem orderItem : orderAux.getOrderItems()){
+            total += orderItem.calculateSubtotal();
+        }
+
+        return total;
     }
 
     private int generateOrderId(){
