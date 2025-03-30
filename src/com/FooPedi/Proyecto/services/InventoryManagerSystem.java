@@ -29,7 +29,6 @@ public class InventoryManagerSystem {
 
     public void initializeSystem(){
 
-
         while (true){
             showMainMenu();
 
@@ -51,6 +50,7 @@ public class InventoryManagerSystem {
 
                 case 4:
                 System.out.println("Saliendo del sistema...");
+                return;
 
                 default:
                 System.out.println("Opcion invalida. Intente nuevamente.");
@@ -208,28 +208,32 @@ public class InventoryManagerSystem {
         }
     }
 
-    private  void updateProduct(){
-        try{
-            System.out.println("Ingrese el ID del producto a actualizar: ");
+    private void updateProduct() {
+        try {
+            System.out.print("Ingrese el ID del producto a actualizar: ");
             int id = scanner.nextInt();
+            scanner.nextLine(); // Consumir salto de línea
 
+            // Buscar el producto por ID
             Product product = productsManager.searchProductById(id);
 
-            System.out.print("Nuevo precio (actual: " + product.getPrice() + "): ");
+            // Mostrar los valores actuales y pedir los nuevos
+            System.out.printf("Nuevo precio (actual: %.2f): ", product.getPrice());
             double newPrice = scanner.nextDouble();
 
-            System.out.println("Nuevo stock (actual: " + product.getStock() + "): ");
+            System.out.printf("Nuevo stock (actual: %d): ", product.getStock());
             int newStock = scanner.nextInt();
 
+            // Actualizar el producto
             productsManager.updateProduct(id, newPrice, newStock);
-            System.out.println("Producto actualizado exitosamente");
+            System.out.println("Producto actualizado exitosamente.");
 
-        }catch(ProductNotFoundException e){
-            System.out.println("Ocurrio un error: " + e.getMessage());
-        }catch(Exception e){
+        } catch (ProductNotFoundException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (Exception e) {
             System.out.println("Error al actualizar el producto: " + e.getMessage());
+            scanner.nextLine(); // Consumir entrada inválida
         }
-
     }
 
     private void removeProduct(){
@@ -296,10 +300,10 @@ public class InventoryManagerSystem {
         System.out.print("Ingrese el nombre del nuevo cliente: ");
         String name = scanner.nextLine();
 
-        System.out.println("Ingrese el mail del nuevo cliente: ");
+        System.out.print("Ingrese el mail del nuevo cliente: ");
         String email = scanner.nextLine();
 
-        System.out.println("Ingrese el numero de telefono del nuevo cliente: ");
+        System.out.print("Ingrese el numero de telefono del nuevo cliente: ");
         String number = scanner.nextLine();
 
         try {
@@ -311,17 +315,18 @@ public class InventoryManagerSystem {
         }
     }
 
-    private void listClient(){
+    private void listClient() {
+        List<Client> clients = clientsManager.listClients();
 
-        if (clientsManager.listClients().isEmpty()){
+        if (clients.isEmpty()) {
             System.out.println("No hay clientes cargados");
             return;
         }
 
         System.out.println("\n--- LISTA DE CLIENTES ---\n");
-        for (Client client : clientsManager.listClients()){
-            System.out.printf("\"ID: %d | Nombre: %s | Precio: $%.2f | Stock: %d%n" +
-            client.getId(), client.getName(), client.getEmail(), client.getNumTelephone());
+        for (Client client : clients) {
+            System.out.printf("ID: %d | Nombre: %s | Email: %s | Teléfono: %s%n",
+                client.getId(), client.getName(), client.getEmail(), client.getNumTelephone());
         }
     }
 
@@ -362,15 +367,16 @@ public class InventoryManagerSystem {
 
             Client client = clientsManager.searchClientById(id);
 
-            System.out.print("Nuevo nombre (actual: " + client.getName() + "): ");
-            String name = scanner.nextLine();
+            System.out.println("Nuevo nombre (actual: " + client.getName() + "): ");
+            String name = scanner.next();
+
             name = formatString(name);
 
             System.out.println("Nuevo email (actual: " + client.getEmail() + "): ");
-            String newEmail = scanner.nextLine();
+            String newEmail = scanner.next();
 
             System.out.println("Nuevo numero de telefono (actual: " + client.getNumTelephone() + "): ");
-            String newNumTel = scanner.nextLine();
+            String newNumTel = scanner.next();
 
             clientsManager.updateClient(id, name, newEmail, newNumTel);
 
@@ -411,7 +417,8 @@ public class InventoryManagerSystem {
             System.out.println("\n--- GESTIÓN DE PEDIDOS ---");
             System.out.println("1. Crear Nuevo Pedido");
             System.out.println("2. Listar Pedidos");
-            System.out.println("3. Volver al Menú Principal");
+            System.out.println("3. Listar pedidos de un cliente");
+            System.out.println("4. Volver al Menú Principal");
             System.out.print("Seleccione una opción: ");
             
             int option = scanner.nextInt();
@@ -426,8 +433,9 @@ public class InventoryManagerSystem {
                     break;
                 case 3:
                     listClientOrders();
+                    break; // Agregar el break aquí
                 case 4:
-                    return;
+                    return; // Salir del método y volver al menú principal
                 default:
                     System.out.println("Opción inválida.");
             }
@@ -515,64 +523,63 @@ public class InventoryManagerSystem {
         }
     }
 
-    private void listOrders(){
-        
+    private void listOrders() {
         List<Order> orders = orderManager.listOrders();
 
-        if (orders.isEmpty()){
-            System.out.print("NO hay pedidos registrados");
+        if (orders.isEmpty()) {
+            System.out.println("No hay pedidos registrados");
+            return;
         }
 
         System.out.println("\n--- LISTA DE PEDIDOS ---");
         for (Order order : orders) {
-            System.out.printf("ID Pedido: %d | Cliente: %s | Fecha: %s | Total: $%.2f%n",
-                order.getId(), 
-                order.getClient().getName(), 
+            System.out.printf("ID Pedido: %d | Cliente: %s | Total: $%.2f%n",
+                order.getId(),
+                order.getClient().getName(),
                 order.getTotalCost());
-            
+
             System.out.println("Productos:");
             for (OrderItem item : order.getOrderItems()) {
-                System.out.printf("- %s x %d | Subtotal: $%.2f%n", 
-                    item.getProduct().getName(), 
-                    item.getAmount(), 
+                System.out.printf("- %s x %d | Subtotal: $%.2f%n",
+                    item.getProduct().getName(),
+                    item.getAmount(),
                     item.calculateSubtotal());
             }
             System.out.println("---");
         }
     }
     
-    private void listClientOrders(){
-        
-        try{
-
-            //Listar clientes para seleccionar
+    private void listClientOrders() {
+        try {
+            // Listar clientes para seleccionar
             List<Client> clients = clientsManager.listClients();
 
             System.out.println("\n--- SELECCIONE UN CLIENTE ---");
             for (Client c : clients) {
                 System.out.printf("ID: %d | Nombre: %s%n", c.getId(), c.getName());
             }
-            
+
             System.out.print("Ingrese ID del cliente: ");
             int clientId = scanner.nextInt();
             Client clientSelect = clientsManager.searchClientById(clientId);
 
             List<Order> ordersClient = clientSelect.getOrdersClient();
+            if (ordersClient.isEmpty()) {
+                System.out.println("El cliente no tiene pedidos registrados.");
+                return;
+            }
+
             System.out.println("\n--- LISTA DE PEDIDOS ---");
             for (Order order : ordersClient) {
-                System.out.printf("ID Pedido: %d | Cliente: %s | Fecha: %s | Total: $%.2f%n",
-                    order.getId(), 
-                    order.getClient().getName(), 
+                System.out.printf("ID Pedido: %d | Cliente: %s | Total: $%.2f%n",
+                    order.getId(),
+                    order.getClient().getName(),
                     order.getTotalCost());
-            }  
-        }catch(CustomerNotFoundException e){
-            System.out.println("Ocurrio un error: " + e.getMessage());
+            }
+        } catch (CustomerNotFoundException e) {
+            System.out.println("Ocurrió un error: " + e.getMessage());
         }
     }
-
-
-
-
 
 
     private static String formatString(String name){
@@ -588,5 +595,10 @@ public class InventoryManagerSystem {
         }
 
         return sb.toString().trim();
+    }
+
+    public static void main(String[] args) {
+        InventoryManagerSystem ims = new InventoryManagerSystem();
+        ims.initializeSystem();
     }
 }

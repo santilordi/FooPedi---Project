@@ -10,27 +10,32 @@ import java.util.List;
 public class ClientsManager {
     private ArrayList<Client> clients;
 
-    public void addClient(Client client) throws CustomerException, InvalidEmailException{
-            
-        //Validad que el cliente no sea nulo
-        if (client == null){
+    public ClientsManager() {
+        this.clients = new ArrayList<>(); // Inicializar la lista de clientes
+    }
+
+    public void addClient(Client client) throws CustomerException, InvalidEmailException {
+        // Validar que el cliente no sea nulo
+        if (client == null) {
             throw new CustomerException("El cliente no puede ser nulo");
         }
 
-        if (!client.getEmail().contains("@")){
+        // Validar que el email contenga un '@'
+        if (!client.getEmail().contains("@")) {
             throw new InvalidEmailException("El email del cliente debe contener un '@'.");
         }
 
-        //Validad que no existe un cliente con el mismo ID
-        for (Client existingClient : clients){
-            if(existingClient.getId() == client.getId()){
-                throw new CustomerException("Ya existe el cliente");
+        // Validar que no exista un cliente con el mismo email
+        for (Client existingClient : clients) {
+            if (existingClient.getEmail().equalsIgnoreCase(client.getEmail())) {
+                throw new CustomerException("Ya existe un cliente con el mismo email");
             }
         }
-        
+
+        // Generar un ID único para el cliente
         client.setId(generateClientId());
-        
-        //Agregar el cliente a la lista
+
+        // Agregar el cliente a la lista
         clients.add(client);
     }
 
@@ -92,7 +97,7 @@ public class ClientsManager {
         client.setNumTelephone(numTelephone);
     }
 
-    private int generateClientId(){
-        return clients == null ? 1 : clients.size() + 1;
+    private int generateClientId() {
+        return clients.isEmpty() ? 1 : clients.get(clients.size() - 1).getId() + 1;
     }
 }

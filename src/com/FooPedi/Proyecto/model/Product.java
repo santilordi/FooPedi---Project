@@ -31,6 +31,10 @@ public abstract class Product {
 
     //Setters
 
+    public void setId(int id){
+        this.id = id;
+    }
+
     public void setPrice(double price) {
         this.price = price;
     }

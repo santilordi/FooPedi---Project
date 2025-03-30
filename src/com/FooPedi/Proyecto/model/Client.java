@@ -1,7 +1,6 @@
 package com.FooPedi.Proyecto.model;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Client {
     private int id;
@@ -15,6 +14,7 @@ public class Client {
         this.name = name;
         this.email = email;
         this.numTelephone = numTelephone;
+        this.ordersClient = new ArrayList<>();
     }
 
     //Getters
@@ -54,6 +54,12 @@ public class Client {
         this.numTelephone = numTelephone;
     }
 
+    public void addOrder(Order order) {
+        if (ordersClient == null) {
+            ordersClient = new ArrayList<>();
+        }
+        ordersClient.add(order);
+    }
 
     @Override
     public String toString() {

@@ -11,24 +11,30 @@ import java.util.List;
 public class OrderManager {
     private ArrayList<Order> orders;
 
-    public Order createOrder(Client client, List<OrderItem> orderItems) throws EmptyOrderException{
-        
-        //Validar que la lista de prodcutos no este vacia
-        if (orderItems == null || orderItems.isEmpty()){
+    public OrderManager() {
+        this.orders = new ArrayList<>(); // Inicializar la lista de órdenes
+    }
+
+    public Order createOrder(Client client, List<OrderItem> orderItems) throws EmptyOrderException {
+        // Validar que la lista de productos no esté vacía
+        if (orderItems == null || orderItems.isEmpty()) {
             throw new EmptyOrderException();
         }
-        
-        //Crear una nueva orden
+
+        // Crear una nueva orden
         Order order = new Order(client);
         order.setId(generateOrderId());
-        
         order.setOrderItems(new ArrayList<>(orderItems));
 
-        if (orders == null){
-            orders = new ArrayList<>();
-        }
+        // Calcular el costo total de la orden
+        order.calculateTotalCost();
 
+        // Agregar la orden a la lista de órdenes
         orders.add(order);
+
+        // Agregar la orden a la lista de pedidos del cliente
+        client.addOrder(order);
+
         return order;
     }
 

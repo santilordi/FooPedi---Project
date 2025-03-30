@@ -11,7 +11,7 @@ public class ProductsManager {
     private ArrayList<Product> products;
 
     public ProductsManager() {
-        this.products = new ArrayList<>();
+        this.products = new ArrayList<>(); // Inicializar la lista de productos
     }
 
     public void addProduct(Product product) throws ProductException {
@@ -22,12 +22,20 @@ public class ProductsManager {
 
         // Validar que el producto no esté duplicado
         for (Product product1 : products) {
-            if (product == product1) {
+            if (product.getName().equalsIgnoreCase(product1.getName())) {
                 throw new ProductException("El producto ya se encuentra cargado");
             }
         }
 
+        // Generar un ID único para el producto
+        product.setId(generateProductId());
+
         products.add(product);
+    }
+
+    // Método para generar un ID único para los productos
+    private int generateProductId() {
+        return products.isEmpty() ? 1 : products.get(products.size() - 1).getId() + 1;
     }
 
     public void removeProduct(int id){
@@ -41,14 +49,14 @@ public class ProductsManager {
         }
     }
 
-    public Product searchProductById(int id) throws ProductNotFoundException{
+    public Product searchProductById(int id) throws ProductNotFoundException {
         for (Product product : products) {
             if (product.getId() == id) {
-                return product;
+                return product; // Devuelve el producto si se encuentra
             }
         }
-
-        throw new ProductNotFoundException("Producto con ID: " + id + "no encontrado.");
+        // Lanza una excepción si no se encuentra el producto
+        throw new ProductNotFoundException(id);
     }
     
     public Product searchProductByName(String name) throws ProductNotFoundException{
@@ -65,14 +73,15 @@ public class ProductsManager {
         return new ArrayList<>(products);
     }
 
-    public void updateProduct(int id, double price, int stock) throws ProductNotFoundException{
-        
+    public void updateProduct(int id, double price, int stock) throws ProductNotFoundException {
         for (Product product : products) {
             if (product.getId() == id) {
-            product.setPrice(price);
-            product.setStock(stock);
+                product.setPrice(price);
+                product.setStock(stock);
+                return; // Salimos del método después de actualizar el producto
             }
         }
-        throw new ProductNotFoundException("Producto con ID: " + id + " no encontrado.");
+        // Si no se encuentra el producto, lanzamos la excepción
+        throw new ProductNotFoundException(id);
     }
 }
