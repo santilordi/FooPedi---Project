@@ -10,8 +10,7 @@ public class Order {
     private Date dateOrder;
     private double totalCost;
 
-    public Order(int id, Client client) {
-        this.id = id;
+    public Order( Client client) {
         this.client = client;
     }
 
@@ -25,7 +24,7 @@ public class Order {
     }
 
     public ArrayList<OrderItem> getOrderItems() {
-        return orderItems;
+        return new ArrayList<>(orderItems);
     }
 
     public Date getDateOrder() {
@@ -55,5 +54,16 @@ public class Order {
 
     public void setTotalCost(double totalCost) {
         this.totalCost = totalCost;
+    }
+
+    public double calculateTotalCost() {
+        totalCost = 0;
+        if (orderItems != null) {
+            for (OrderItem item : orderItems) {
+                totalCost += item.calculateSubtotal();
+            }
+        }
+
+        return totalCost;
     }
 }

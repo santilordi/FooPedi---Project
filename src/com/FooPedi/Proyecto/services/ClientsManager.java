@@ -27,7 +27,9 @@ public class ClientsManager {
                 throw new CustomerException("Ya existe el cliente");
             }
         }
-
+        
+        client.setId(generateClientId());
+        
         //Agregar el cliente a la lista
         clients.add(client);
     }
@@ -88,5 +90,9 @@ public class ClientsManager {
         client.setName(name);
         client.setEmail(email);
         client.setNumTelephone(numTelephone);
+    }
+
+    private int generateClientId(){
+        return clients == null ? 1 : clients.size() + 1;
     }
 }

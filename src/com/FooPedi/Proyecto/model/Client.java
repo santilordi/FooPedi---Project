@@ -1,17 +1,17 @@
 package com.FooPedi.Proyecto.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Client {
-    private final int id;
+    private int id;
     private String name;
     private String email;
     private String numTelephone;
     private ArrayList<Order> ordersClient;
 
     //Constructor
-    public Client(int id, String name, String email, String numTelephone) {
-        this.id = id;
+    public Client(String name, String email, String numTelephone) {
         this.name = name;
         this.email = email;
         this.numTelephone = numTelephone;
@@ -35,10 +35,13 @@ public class Client {
     }
 
     public ArrayList<Order> getOrdersClient(){
-        return ordersClient;
+        return new ArrayList<>(ordersClient);
     }
 
     //Setters
+    public void setId(int id){
+        this.id = id;
+    }
     public void setName(String name){
         this.name = name;
     }

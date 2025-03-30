@@ -19,7 +19,9 @@ public class OrderManager {
         }
         
         //Crear una nueva orden
-        Order order = new Order(generateOrderId(), client);
+        Order order = new Order(client);
+        order.setId(generateOrderId());
+        
         order.setOrderItems(new ArrayList<>(orderItems));
 
         if (orders == null){
